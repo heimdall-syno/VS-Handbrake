@@ -1,0 +1,8 @@
+##############################################################
+##          Config file for the VS-Handbrake                ##
+##############################################################
+
+[Handbrake]
+handbrake = /handbrake
+handbrake_movies = Filme, video
+handbrake_series = Serien, Dokus, Anime
