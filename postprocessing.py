@@ -38,9 +38,9 @@ def get_convert_source_path(args):
 
     ## Get the source path
     with open(convert_path, "r") as f:
-        args.root_host = f.readlines()[0]
-        args.source_host = f.readlines()[1]
-        args.output_host = f.readlines()[2]
+        args.root_host = f.readlines()[0].split(":")[1]
+        args.source_host = f.readlines()[1].split(":")[1]
+        args.output_host = f.readlines()[2].split(":")[1]
     return args
 
 def processing_file(cfg, args):
@@ -60,8 +60,8 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert file and add to synoindex
     if file_dst:
-        print("Delete convert file at %s" % (convert_path))
-        os.remove(convert_path)
+        print("Delete convert file at %s" % (args.convert_path))
+        os.remove(args.convert_path)
         print("Add to synoindex database")
         client(file_dst, args.output_host)
 
