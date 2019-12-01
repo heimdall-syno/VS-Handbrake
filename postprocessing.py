@@ -11,6 +11,7 @@ sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
 from naming_series import naming_episode
 from parse import parse_cfg
 from client import client
+from prints import debugmsg, errmsg
 
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
@@ -25,7 +26,7 @@ def get_convert_source_path(args):
     ## check whether the convert directory exists
     file_name = os.path.basename(args.file)
     convert_file = "%s.txt" % os.path.splitext(file_name)[0]
-    convert_path = os.path.abspath(os.path.join("data", "convert"))
+    convert_path = os.path.join(os.sep, "data", "convert")
     if not os.path.isdir(convert_path):
         exit("Error: Seems like the data mount does not exist, [VS-Handbrake] -> /data")
 
@@ -37,10 +38,9 @@ def get_convert_source_path(args):
         exit("Error: Convert file does not exist")
 
     ## Get the source path
-    with open(convert_path, "r") as f:
-        args.root_host = f.readlines()[0].split(":")[1]
-        args.source_host = f.readlines()[1].split(":")[1]
-        args.output_host = f.readlines()[2].split(":")[1]
+    with open(args.convert_path, "r") as f: lines = f.readlines()
+    convert_args = [l.replace("\n", "").split(":")[1] for l in lines]
+    args.root_host, args.source_host, args.output_host = convert_args
     return args
 
 def processing_file(cfg, args):
@@ -48,21 +48,21 @@ def processing_file(cfg, args):
     ## Check the file type
     file_dst = None
     if any(season_type in args.root_host.split(os.sep) for season_type in cfg.handbrake_series):
-        print("  Type: Episode")
+        debugmsg("Type: Episode")
         file_dst = naming_episode(args)
 
     elif any(season_type in args.root_host.split(os.sep) for season_type in cfg.handbrake_series):
-        print("  Type: Movie")
-        print("  NOT SUPPORTED RIGHT NOW")
+        debugmsg("Type: Movie")
+        debugmsg("NOT SUPPORTED RIGHT NOW")
         #file_dst = naming_movies(args)
     else:
         exit("Error: Unsupported type of converted file")
 
     ## Delete the corresponding convert file and add to synoindex
     if file_dst:
-        print("Delete convert file at %s" % (args.convert_path))
-        os.remove(args.convert_path)
-        print("Add to synoindex database")
+        #print("Delete convert file at %s" % (args.convert_path))
+        #os.remove(args.convert_path)
+        debugmsg("Add to synoindex database")
         client(file_dst, args.output_host)
 
 def main():
@@ -85,7 +85,7 @@ def main():
 
     ## Print the date and the file
     cur_date = datetime.strftime(datetime.now(), "%Y-%m-%d-%H-%M")
-    print("[%s] Handbrake finished converting file: %s" % cur_date, args.file)
+    debugmsg("Handbrake finished converting file", (args.file,))
 
     ## Check for the source file, continue if convert file doesnt exist
     args = get_convert_source_path(args)
