@@ -55,8 +55,6 @@ def analyze_series(series):
     if season_desc not in series.dst.split(os.sep)[-1]:
         series.dst = directories[:(directories.index(series.series_path) + 2)] + [series.season]
         series.dst = "%s%s" % (os.sep,os.path.join(*series.dst))
-        if not os.path.isdir(series.dst):
-            os.mkdir(series.dst)
 
     return series
 
@@ -70,27 +68,23 @@ def naming_episode(args):
     delimiter_count = [(key, val) for key, val in delimiter_count if key in delimiters]
     delimiter = sorted(delimiter_count, key=lambda x: x[1])[-1][0]
 
-    ## Get the name of the root series directory
-    series_path = args.original.split(os.sep)[2]
-
     ## Get all information about the episode and season
     path = os.path.abspath(os.path.join(args.file, os.pardir))
-    series = Namespace(file=args.file, path=path, delim=delimiter, original=args.original, series_path=series_path)
+    series = Namespace(file=args.file, path=path, delim=delimiter, original=args.source_host, series_path=args.root_host)
     series = analyze_series(series)
     print("  Analysis Namespace: %s" % series)
 
     ## Move the file back to the original path
     file_name = "%s.%s.%s%s" % (series.name, series.episode, series.resolution, series.extension)
     file_dst = os.path.join(series.dst, file_name)
-    print("  Moving file: %s" % file_dst)
-    move(series.file, file_dst)
     return file_dst
 
 if __name__ == "__main__":
 
     args = argparse.Namespace()
     parser = argparse.ArgumentParser(description='Series naming script')
-    parser.add_argument('-f','--file', help='Path to the video file', required=True)
-    parser.add_argument('-c','--convert', help='Path to the convert file', required=True)
+    parser.add_argument('-f','--file', help='Path to the converted coutput video file', required=True)
+    parser.add_argument('-o','--original', help='Path to the original file', required=True)
     args = parser.parse_args()
+    args.source_host = args.original
     naming_episode(args)
