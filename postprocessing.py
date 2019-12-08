@@ -30,9 +30,9 @@ def get_convert_source_path(args):
     ## check whether the convert directory exists
     file_name = os.path.basename(args.file)
     convert_file = "%s.txt" % os.path.splitext(file_name)[0]
-    convert_path = os.path.join(os.sep, "data", "convert")
+    convert_path = os.path.join(os.sep, "convert")
     if not os.path.isdir(convert_path):
-        exit("Error: Seems like the data mount does not exist, [VS-Handbrake] -> /data")
+        exit("Error: Seems like the data mount does not exist, [VS-Handbrake] -> /convert")
 
     ## check whether the convert file exists
     args.convert_path = os.path.join(convert_path, convert_file)
