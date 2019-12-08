@@ -13,6 +13,10 @@ from parse import parse_cfg
 from client import client
 from prints import debugmsg, errmsg
 
+## Redirect stdout and stderr for docker logs
+sys.stdout = open("/proc/self/fd/1", "w")
+sys.stderr = open("/proc/self/fd/2", "w")
+
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
 
