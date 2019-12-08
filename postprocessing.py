@@ -62,7 +62,7 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert file and add to synoindex
     if file_dst:
-        print("Delete convert file at %s" % (args.convert_path))
+        debugmsg("Delete convert file at %s" % (args.convert_path))
         os.remove(args.convert_path)
         debugmsg("Add to synoindex database")
         client(file_dst, args.output_host)
