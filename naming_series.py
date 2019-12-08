@@ -63,10 +63,11 @@ def analyze_series(series):
     series.season = "%s %s" % (season_desc, series.season)
 
     ## Get the series name of the file
-    series.name = series.original.replace(series.series_path, "").split(os.sep)[1].replace(" ", "-")
+    series.name_bk = series.original.replace(series.series_path, "").split(os.sep)[1]
+    series.name = series.name_bk.replace(" ", "-")
 
     ## Get the destination directory
-    series.dst = os.path.join(series.series_path, series.name, series.season)
+    series.dst = os.path.join(series.series_path, series.name_bk, series.season)
     return series
 
 def naming_episode(args):
