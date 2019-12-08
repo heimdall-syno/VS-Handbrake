@@ -36,8 +36,6 @@ def get_convert_source_path(args):
 
     ## check whether the convert file exists
     args.convert_path = os.path.join(convert_path, convert_file)
-    if args.test:
-        args.convert_path = args.convert_path.replace("convert", "test")
     if not os.path.isfile(args.convert_path):
         exit("Error: Convert file does not exist")
 
@@ -64,8 +62,8 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert file and add to synoindex
     if file_dst:
-        #print("Delete convert file at %s" % (args.convert_path))
-        #os.remove(args.convert_path)
+        print("Delete convert file at %s" % (args.convert_path))
+        os.remove(args.convert_path)
         debugmsg("Add to synoindex database")
         client(file_dst, args.output_host)
 
@@ -80,7 +78,6 @@ def main():
     args = argparse.Namespace()
     parser = argparse.ArgumentParser(description='Naming and locate script for Handbrake docker container')
     parser.add_argument('-f','--file', help='Path to the video file', required=True)
-    parser.add_argument('-t','--test', help='Testing mode', action='store_true', required=False)
     args = parser.parse_args()
 
     ## Parse the config
