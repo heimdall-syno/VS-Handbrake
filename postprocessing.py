@@ -11,11 +11,10 @@ sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
 from naming_series import naming_episode
 from parse import parse_cfg
 from client import client
-from prints import debugmsg, errmsg
+from prints import debugmsg, errmsg, Logger
 
 ## Redirect stdout and stderr for docker logs
-sys.stdout = open("/proc/1/fd/1", "w")
-sys.stderr = open("/proc/1/fd/1", "w")
+sys.stdout, sys.stderr = (Logger() for _ in range(2))
 
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
