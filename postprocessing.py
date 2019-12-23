@@ -11,10 +11,7 @@ sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
 from naming_series import naming_episode
 from parse import parse_cfg
 from client import client
-from prints import debugmsg, errmsg, Logger
-
-## Redirect stdout and stderr for docker logs
-sys.stdout, sys.stderr = (Logger() for _ in range(2))
+from prints import debugmsg, errmsg, init_logging
 
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
@@ -83,8 +80,10 @@ def main():
     config_file = os.path.join(cur_dir, "config.txt")
     cfg = parse_cfg(config_file, "vs-handbrake", "docker")
 
+    ## Initialize the logging
+    init_logging()
+
     ## Print the date and the file
-    cur_date = datetime.strftime(datetime.now(), "%Y-%m-%d-%H-%M")
     debugmsg("Handbrake finished converting file", (args.file,))
 
     ## Check for the source file, continue if convert file doesnt exist
