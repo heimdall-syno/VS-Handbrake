@@ -19,7 +19,7 @@ $ sudo docker run -d \
     -v /volume1/docker/handbrake/output:/output:rw \
     -v /volume1/docker/handbrake/convert:/convert:rw \
     -v /volume1/docker:/docker:rw \
-    -v /volume1/docker/handbrake/vs-handbrake:/data:rw \
+    -v /volume1/docker/handbrake:/data:rw \
     jlesage/handbrake
 
 $ sudo docker exec -it Handbrake apk add python
@@ -44,7 +44,7 @@ Folder                                            | Mount-Path            | Type
 /volume1/docker/handbrake/output                  | /output               | rw
 /volume1/docker/handbrake/convert                 | /convert              | rw
 /volume1/docker                                   | /docker               | rw
-/volume1/docker/handbrake/vs-handbrake            | /data                 | rw
+/volume1/docker/handbrake                         | /data                 | rw
 ```
 
 Network settings:
