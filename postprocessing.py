@@ -56,10 +56,15 @@ def processing_file(cfg, args):
     else:
         exit("Error: Unsupported type of converted file")
 
-    ## Delete the corresponding convert file and add to synoindex
+    ## Delete the corresponding convert and watch file and add to synoindex
     if file_dst:
         debugmsg("Delete convert file at %s" % (args.convert_path))
         os.remove(args.convert_path)
+
+        watch_path = os.path.join(os.sep, "watch", os.path.basename(args.output_host))
+        debugmsg("Delete watch file at %s" % watch_path)
+        os.remove(watch_path)
+
         debugmsg("Add to synoindex database")
         client(file_dst, args.output_host)
 
