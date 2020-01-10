@@ -8,7 +8,7 @@ from datetime import datetime
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
 sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
-from naming_series import naming_episode
+from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client
 from prints import debugmsg, errmsg, init_logging
@@ -45,27 +45,26 @@ def processing_file(cfg, args):
 
     ## Check the file type
     file_dst = None
-    if any(season_type in args.root_host.split(os.sep) for season_type in cfg.handbrake_series):
-        debugmsg("Type: Episode")
+    if any(file_type in args.root_host.split(os.sep) for file_type in cfg.handbrake_series):
+        debugmsg("Type: Episode", "Postprocessing")
         file_dst = naming_episode(args)
 
-    elif any(season_type in args.root_host.split(os.sep) for season_type in cfg.handbrake_series):
-        debugmsg("Type: Movie")
-        debugmsg("NOT SUPPORTED RIGHT NOW")
-        #file_dst = naming_movies(args)
+    elif any(file_type in args.root_host.split(os.sep) for file_type in cfg.handbrake_movies):
+        debugmsg("Type: Movie", "Postprocessing")
+        file_dst = naming_movie(args)
     else:
         exit("Error: Unsupported type of converted file")
 
     ## Delete the corresponding convert and watch file and add to synoindex
     if file_dst:
-        debugmsg("Delete convert file at %s" % (args.convert_path))
+        debugmsg("Delete convert file at", "Postprocessing", (args.convert_path,))
         os.remove(args.convert_path)
 
         watch_path = os.path.join(os.sep, "watch", os.path.basename(args.output_host))
-        debugmsg("Delete watch file at %s" % watch_path)
+        debugmsg("Delete watch file at", "Postprocessing", (watch_path,))
         os.remove(watch_path)
 
-        debugmsg("Add to synoindex database")
+        debugmsg("Add to synoindex database", "Postprocessing")
         client(file_dst, args.output_host)
 
 def main():
@@ -89,7 +88,7 @@ def main():
     init_logging()
 
     ## Print the date and the file
-    debugmsg("Handbrake finished converting file", (args.file,))
+    debugmsg("Handbrake finished converting file", "Postprocessing", (args.file,))
 
     ## Check for the source file, continue if convert file doesnt exist
     args = get_convert_source_path(args)
