@@ -18,3 +18,6 @@ docker exec -it "$containername" apk add python3 ffmpeg
 docker exec -it "$containername" curl https://bootstrap.pypa.io/get-pip.py -o /get-pip.py
 docker exec -it Transmission python3 /get-pip.py &&  rm -rf /get-pip.py
 docker exec -it Transmission pip3 install configparser
+
+## Update the hook perfored by handbrake after conversion
+cp post_conversion.sh ../config/hooks/post_conversion.sh
