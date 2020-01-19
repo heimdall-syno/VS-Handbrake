@@ -24,7 +24,7 @@ def get_resolution(file_name):
     if (len(stderr) > 1): errmsg(stderr)
 
     ## Parse the mediainfo output as dictionary
-    mediainfo_output = stdout.split("\n")
+    mediainfo_output = stdout.decode("UTF-8").split("\n")
     mediainfo_output = [' '.join(m.split()).split(" : ") for m in mediainfo_output]
     mediainfo_output = dict([tuple(m) for m in mediainfo_output if len(m) > 1])
 
