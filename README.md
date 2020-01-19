@@ -1,13 +1,15 @@
-VS-Transmission
+VS-Handbrake
 =========
 
-VS-Handbrake is a simple python tool for renaming and relocating converted files.
+VS-Handbrake is an extension of the handbrake docker container (https://github.com/jlesage/docker-handbrake) for renaming and relocating converted video files to perfectly match with Synology's VideoStation.
 
-----
+It is the second part of the VS-Toolchain to download, convert, rename and relocate video files for Synology's VideoStation.
 
-#### Installation
+Checkout the first part of the toolchain - called VS-Transmission (https://github.com/salsh/vs-handbrake) - which performs the downloading part.
 
-Setup:
+## Quick Start
+
+1. Create a docker container of the handbrake image with extended volumes
 ```
 $ sudo docker run -d \
     --name=Handbrake \
@@ -18,38 +20,20 @@ $ sudo docker run -d \
     -v /volume1/docker/handbrake/watch:/watch:rw \
     -v /volume1/docker/handbrake/output:/output:rw \
     -v /volume1/docker/handbrake/convert:/convert:rw \
-    -v /volume1/docker:/docker:rw \
     -v /volume1/docker/handbrake:/data:rw \
     jlesage/handbrake
-
-$ sudo docker exec -it Handbrake apk add python
-$ sudo docker exec -it Handbrake apk add mediainfo
-```
-#### Container configuration
-
-Port settings:
-```
-Local port    | Container port
---------------+---------------
-5800          | 5800
 ```
 
-Volume settings:
-```
-Folder                                            | Mount-Path            | Type
---------------------------------------------------+-----------------------+-----
-/volume1/docker/handbrake/config                  | /config               | rw
-/volume1/docker/handbrake/storage                 | /storage              | rw
-/volume1/docker/handbrake/watch                   | /watch                | rw
-/volume1/docker/handbrake/output                  | /output               | rw
-/volume1/docker/handbrake/convert                 | /convert              | rw
-/volume1/docker                                   | /docker               | rw
-/volume1/docker/handbrake                         | /data                 | rw
-```
+2. Make sure the task (task planer) for the /dev/dri device is configured:
+	```
+    Task:       Docker-Handbrake
+    User:       root
+    Command:    bash /volume1/docker/handbrake/dri.sh
+    ```
 
-Network settings:
-```
-Name     | Driver
----------+---------
-bridge   | bridge
-```
+3. Make sure the container is up and running. If so install all dependencies:
+    ```
+    $ sudo ./autogen.sh
+    ```
+
+4. Edit the config file to define which mounts belongs to which video file category (movies or series)
