@@ -9,7 +9,9 @@ Checkout the first part of the toolchain - called VS-Transmission (https://githu
 
 ## Quick Start
 
-1. Create a docker container of the handbrake image with extended volumes
+1. Clone the repository inside the root directory of the handbrake docker container.
+
+2. Create a docker container of the handbrake image with extended volumes
 ```
 $ sudo docker run -d \
     --name=Handbrake \
@@ -24,16 +26,16 @@ $ sudo docker run -d \
     jlesage/handbrake
 ```
 
-2. Make sure the task (task planer) for the /dev/dri device is configured:
+3. Make sure the task (task planer) for the /dev/dri device is configured:
 	```
     Task:       Docker-Handbrake
     User:       root
     Command:    bash /volume1/docker/handbrake/dri.sh
     ```
 
-3. Make sure the container is up and running. If so install all dependencies:
+4. Make sure the container is up and running. If so install all dependencies:
     ```
     $ sudo ./autogen.sh
     ```
 
-4. Edit the config file to define which mounts belongs to which video file category (movies or series)
+5. Edit the config file to define which mounts belongs to which video file category (movies or series)
