@@ -47,6 +47,7 @@ def delimiter_get(filename):
     delimiter_count = Counter(filename).most_common()
     delimiter_count = [(key, val) for key, val in delimiter_count if key in delimiters]
     delimiter = sorted(delimiter_count, key=lambda x: x[1])[-1][0]
+    debugmsg("Delimiter counts and the selected one", "Naming", (delimiter_count, delimiter))
     return delimiter
 
 ###############################################################################
@@ -142,7 +143,7 @@ def analyze_movie(movie):
 def naming_movie(args):
 
     ## Get the delimiter of the video filename
-    delimiter = delimiter_get(args.file)
+    delimiter = delimiter_get(args.source_host)
 
     ## Get all information about the episode and season
     path = os.path.abspath(os.path.join(args.file, os.pardir))
