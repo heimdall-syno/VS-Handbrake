@@ -7,7 +7,7 @@ from datetime import datetime
 ## Add modules from the submodule (vs-utils)
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
-sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
+sys.path.append(os.path.join(cur_dir, "VS-SynoIndex", "scripts"))
 from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client

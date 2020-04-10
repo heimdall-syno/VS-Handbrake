@@ -6,7 +6,6 @@ from argparse import Namespace
 ## Add modules from the submodule (vs-utils)
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
-sys.path.append(os.path.join(cur_dir, "VS-SynoIndex"))
 from parse import parse_cfg
 from prints import errmsg, debugmsg
 
