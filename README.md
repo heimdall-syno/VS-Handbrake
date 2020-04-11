@@ -38,4 +38,6 @@ $ sudo docker run -d \
     $ sudo ./autogen.sh
     ```
 
-5. Edit the config file to define which mounts belongs to which video file category (movies or series)
+5. Edit the port number according to your VS-SynoIndex configuration in post_conversion.sh
+
+6. Edit the config file to define which mounts belongs to which video file category (movies or series)
