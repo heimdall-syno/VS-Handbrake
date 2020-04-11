@@ -7,11 +7,42 @@ It is the second part of the VS-Toolchain to download, convert, rename and reloc
 
 Checkout the first part of the toolchain - called VS-Transmission (https://github.com/salsh/vs-handbrake) - which performs the downloading part.
 
+## Overview of the VS-Components
+```
+             +---------------------------------------------------------------------------------+
+             |                                  Synology DSM                                   |
+             +---------------------------------------------------------------------------------+
+             |                  +--------------------+  +-----------------+                    |
+             |                  |       Docker       |  |      Docker     |                    |
+             |                  |transmission.openVpn|  |     Handbrake   |                    |
+             |                  +--------------------+  +-----------------+                    |
+             | +------------+   | +---------------+  |  | +-------------+ |  +---------------+ |
+             | |VS-SynoIndex|   | |VS-Transmission|  |  | | VS-Handbrake| |  |VS-Notification| |
+             | |   (Task)   +---->+   (Script)    +------>+   (Script)  +--->+    (Task)     | |
+             | +------------+   | +---------------+  |  | +-------------+ |  +---------------+ |
+             |                  +--------------------+  +-----------------+                    |
+             |                                                                                 |
+             +---------------------------------------------------------------------------------+
+```
+
+Check out the other components:
+
+
+VS-SynoIndex:      https://github.com/heimdall-syno/VS-SynoIndex
+
+VS-Transmission:   https://github.com/heimdall-syno/VS-Transmission
+
+VS-Notification:   https://github.com/heimdall-syno/VS-Notification
+
+VS-Playlist-Share: https://github.com/heimdall-syno/VS-Playlist-Share
+
 ## Quick Start
 
-1. Clone the repository inside the root directory of the handbrake docker container.
+1. Setup VS-Transmission and VS-SynoIndex as described in the corresponding README.
 
-2. Create a docker container of the handbrake image with extended volumes
+2. Clone the repository inside the root directory of the handbrake docker directory.
+
+3. Create a docker container of the handbrake image with extended volumes
 ```
 $ sudo docker run -d \
     --name=Handbrake \
@@ -26,7 +57,7 @@ $ sudo docker run -d \
     jlesage/handbrake
 ```
 
-3. Make sure the task (task planer) for the /dev/dri device is configured:
+3. Make sure the Triggered Task (Control Panel > Task Scheduler) for the /dev/dri device is configured:
 	```
     Task:       Docker-Handbrake
     User:       root
@@ -38,6 +69,6 @@ $ sudo docker run -d \
     $ sudo ./autogen.sh
     ```
 
-5. Edit the port number according to your VS-SynoIndex configuration in post_conversion.sh
+5. Edit the port number according to your VS-SynoIndex configuration in `post_conversion.sh`
 
 6. Edit the config file to define which mounts belongs to which video file category (movies or series)
