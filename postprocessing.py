@@ -7,11 +7,10 @@ from datetime import datetime
 ## Add modules from the submodule (vs-utils)
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
-sys.path.append(os.path.join(cur_dir, "VS-SynoIndex", "scripts"))
+from prints import debugmsg, errmsg, init_logging
 from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client
-from prints import debugmsg, errmsg, init_logging
 
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
@@ -65,7 +64,7 @@ def processing_file(cfg, args):
         os.remove(watch_path)
 
         debugmsg("Add to synoindex database", "Postprocessing")
-        client(file_dst, args.output_host)
+        client(file_dst, args.port, args.output_host)
 
 def main():
     """ Name:    VS-Handbrake (Part of the VS-Package)
@@ -78,6 +77,7 @@ def main():
     args = argparse.Namespace()
     parser = argparse.ArgumentParser(description='Naming and locate script for Handbrake docker container')
     parser.add_argument('-f','--file', help='Path to the video file', required=True)
+    parser.add_argument('-p','--port', help='Syno-Index server port', type=int, required=True)
     args = parser.parse_args()
 
     ## Parse the config

@@ -26,7 +26,7 @@ echo "post-conversion: Preset = $PRESET"
 
 # Successful conversion.
 if [ "$CONVERSION_STATUS" -eq 0 ]; then
-    python3 /data/vs-handbrake/postprocessing.py -f "$CONVERTED_FILE"
+    python3 /data/vs-handbrake/postprocessing.py -f "$CONVERTED_FILE" -p 32699
 
     # Failed conversion.
 else
