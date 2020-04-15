@@ -5,3 +5,14 @@
 [Handbrake]
 handbrake_movies = Filme, video
 handbrake_series = Serien, Dokus, Anime
+
+## handbrake_original:
+##  0 - (Leave) The source file remains unchanged.
+##  1 - (Ignore) The source file remains unchanged but not synoindexed.
+##  2 - (Delete) If extracted from RAR archive delete the source file.
+##  3 - (Ignore|Delete): If extracted delete it otherwise ignore it.
+handbrake_original = 3
+
+[SynoIndex]
+synoindex_port = 32699
+

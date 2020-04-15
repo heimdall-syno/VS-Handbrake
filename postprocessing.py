@@ -12,6 +12,16 @@ from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client
 
+def scope_get():
+    ''' Get the scope of the script (within docker container or host system) '''
+
+    cgroup_path = os.path.join("proc", "1" , "cgroup")
+    with open(cgroup_path, 'r') as f: groups = f.readlines()
+    groups = list(set([g.split(":")[-1] for g in groups]))
+    if (len(groups) == 1 and groups[0] == os.sep):
+        return "host"
+    return "docker"
+
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
 
@@ -44,11 +54,11 @@ def processing_file(cfg, args):
 
     ## Check the file type
     file_dst = None
-    if any(file_type in args.root_host.split(os.sep) for file_type in cfg.handbrake_series):
+    if any(file_type in args.root_host.split(os.sep) for file_type in cfg.series):
         debugmsg("Type: Episode", "Postprocessing")
         file_dst = naming_episode(args)
 
-    elif any(file_type in args.root_host.split(os.sep) for file_type in cfg.handbrake_movies):
+    elif any(file_type in args.root_host.split(os.sep) for file_type in cfg.movies):
         debugmsg("Type: Movie", "Postprocessing")
         file_dst = naming_movie(args)
     else:
@@ -64,7 +74,7 @@ def processing_file(cfg, args):
         os.remove(watch_path)
 
         debugmsg("Add to synoindex database", "Postprocessing")
-        client(file_dst, args.port, args.output_host)
+        client(args.scope, cfg.port, file_dst, args.output_host, cfg.original)
 
 def main():
     """ Name:    VS-Handbrake (Part of the VS-Package)
@@ -77,15 +87,16 @@ def main():
     args = argparse.Namespace()
     parser = argparse.ArgumentParser(description='Naming and locate script for Handbrake docker container')
     parser.add_argument('-f','--file', help='Path to the video file', required=True)
-    parser.add_argument('-p','--port', help='Syno-Index server port', type=int, required=True)
     args = parser.parse_args()
+    args.script_dir = cur_dir
+    args.scope = scope_get()
 
     ## Parse the config
     config_file = os.path.join(cur_dir, "config.txt")
     cfg = parse_cfg(config_file, "vs-handbrake", "docker")
 
     ## Initialize the logging
-    init_logging()
+    init_logging(args)
 
     ## Print the date and the file
     debugmsg("Handbrake finished converting file", "Postprocessing", (args.file,))
