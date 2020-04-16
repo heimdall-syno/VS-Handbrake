@@ -12,10 +12,14 @@ from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client
 
+def switch_original(original):
+    switcher = { 0: "leave", 1: "ignore", 2: "delete", 3: "delete|ignore"}
+    return switcher.get(original, "Invalid month")
+
 def scope_get():
     ''' Get the scope of the script (within docker container or host system) '''
 
-    cgroup_path = os.path.join("proc", "1" , "cgroup")
+    cgroup_path = os.path.join(os.sep, "proc", "1" , "cgroup")
     with open(cgroup_path, 'r') as f: groups = f.readlines()
     groups = list(set([g.split(":")[-1] for g in groups]))
     if (len(groups) == 1 and groups[0] == os.sep):
@@ -66,14 +70,15 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert and watch file and add to synoindex
     if file_dst:
-        debugmsg("Delete convert file at", "Postprocessing", (args.convert_path,))
+        debugmsg("Delete convert file", "Postprocessing", (args.convert_path,))
         os.remove(args.convert_path)
 
         watch_path = os.path.join(os.sep, "watch", os.path.basename(args.output_host))
-        debugmsg("Delete watch file at", "Postprocessing", (watch_path,))
+        debugmsg("Delete watch file", "Postprocessing", (watch_path,))
         os.remove(watch_path)
 
-        debugmsg("Add to synoindex database", "Postprocessing")
+        msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
+        debugmsg(msg, "Postprocessing")
         client(args.scope, cfg.port, file_dst, args.output_host, cfg.original)
 
 def main():
