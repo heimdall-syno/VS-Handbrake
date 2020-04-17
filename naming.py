@@ -67,19 +67,25 @@ def analyze_series(series):
     ## Analyze the current season number
     splitted = series.file_base.split(series.delim)
     try:
-        debugmsg("Check for regular naming scheme (e.g. s01e01)", "Naming")
+        debugmsg("Check for regular naming scheme (s01e01)", "Naming")
         season_ep = [f for f in splitted if "s0" in f.lower() or "s1" in f.lower()][0]
         series.season = "{}".format(re.split('s|e', season_ep.lower())[1])
         series.episode = "S%sE%s" % (series.season, re.split('s|e', season_ep.lower())[2])
         series.season = "%s %s" % (season_desc, series.season)
     except IndexError:
-        debugmsg("Regular naming scheme not found, check for alternative naming scheme (e.g. 101)", "Naming")
+        debugmsg("Regular naming scheme not found, check for alternative naming scheme (101|1201)", "Naming")
         season_ep = splitted[-1]
         if (season_ep.isdigit()):
-            if (int(season_ep) > 100 and int(season_ep) < 999):
-                series.season = "%02d" % int(season_ep[0])
-                series.episode = "S%sE%s" % (series.season, season_ep[1:])
-                series.season = "%s %s" % (season_desc, series.season)
+            if (int(season_ep) > 100 and int(season_ep) < 1000):
+                series.season = "{:02d}".format(int(season_ep[0]))
+                series.episode = "S{}E{}".format(series.season, season_ep[1:])
+                series.season = "{} {}".format(season_desc, series.season)
+                debugmsg("Alternative naming scheme found", "Naming")
+            elif(int(season_ep) > 1000 and int(season_ep) < 2000):
+                series.season = "{:02d}".format(int(season_ep[:2]))
+                series.episode = "S{}E{}".format(series.season, season_ep[3:])
+                series.season = "{} {}".format(season_desc, series.season)
+                debugmsg("Alternative naming scheme found", "Naming")
             else:
                 errmsg("Undefined naming scheme for episode", "Naming", (series.file,))
                 exit()
