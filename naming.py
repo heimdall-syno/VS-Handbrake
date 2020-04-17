@@ -83,7 +83,7 @@ def analyze_series(series):
                 debugmsg("Alternative naming scheme found", "Naming")
             elif(int(season_ep) > 1000 and int(season_ep) < 2000):
                 series.season = "{:02d}".format(int(season_ep[:2]))
-                series.episode = "S{}E{}".format(series.season, season_ep[3:])
+                series.episode = "S{}E{}".format(series.season, season_ep[-2:])
                 series.season = "{} {}".format(season_desc, series.season)
                 debugmsg("Alternative naming scheme found", "Naming")
             else:
