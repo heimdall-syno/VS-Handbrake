@@ -7,14 +7,14 @@ from datetime import datetime
 ## Add modules from the submodule (vs-utils)
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
-from prints import debugmsg, errmsg, init_logging
+from prints import errmsg, debugmsg, infomsg, init_logging
 from naming import naming_episode, naming_movie
 from parse import parse_cfg
 from client import client
 
 def switch_original(original):
     switcher = { 0: "leave", 1: "ignore", 2: "delete", 3: "delete|ignore"}
-    return switcher.get(original, "Invalid month")
+    return switcher.get(original, "Invalid original mode")
 
 def scope_get():
     ''' Get the scope of the script (within docker container or host system) '''
@@ -41,12 +41,12 @@ def get_convert_source_path(args):
     convert_file = "%s.txt" % os.path.splitext(file_name)[0]
     convert_path = os.path.join(os.sep, "convert")
     if not os.path.isdir(convert_path):
-        exit("Error: Seems like the data mount does not exist, [VS-Handbrake] -> /convert")
+        errmsg("Seems like the data mount does not exist, [VS-Handbrake] -> /convert", "Postprocessing"); exit()
 
     ## check whether the convert file exists
     args.convert_path = os.path.join(convert_path, convert_file)
     if not os.path.isfile(args.convert_path):
-        exit("Error: Convert file does not exist")
+        errmsg("Convert file does not exist"); exit()
 
     ## Get the source path
     with open(args.convert_path, "r") as f: lines = f.readlines()
@@ -59,11 +59,11 @@ def processing_file(cfg, args):
     ## Check the file type
     file_dst = None
     if any(file_type in args.root_host.split(os.sep) for file_type in cfg.series):
-        debugmsg("Type: Episode", "Postprocessing")
+        infomsg("Type: Episode", "Postprocessing")
         file_dst = naming_episode(args)
 
     elif any(file_type in args.root_host.split(os.sep) for file_type in cfg.movies):
-        debugmsg("Type: Movie", "Postprocessing")
+        infomsg("Type: Movie", "Postprocessing")
         file_dst = naming_movie(args)
     else:
         exit("Error: Unsupported type of converted file")
@@ -78,7 +78,7 @@ def processing_file(cfg, args):
         os.remove(watch_path)
 
         msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
-        debugmsg(msg, "Postprocessing")
+        infomsg(msg, "Postprocessing")
         client(args.scope, cfg.port, file_dst, args.output_host, cfg.original)
 
 def main():
@@ -101,10 +101,10 @@ def main():
     cfg = parse_cfg(config_file, "vs-handbrake", "docker")
 
     ## Initialize the logging
-    init_logging(args)
+    init_logging(args, cfg)
 
     ## Print the date and the file
-    debugmsg("Handbrake finished converting file", "Postprocessing", (args.file,))
+    infomsg("Handbrake finished converting file", "Postprocessing", (args.file,))
 
     ## Check for the source file, continue if convert file doesnt exist
     args = get_convert_source_path(args)

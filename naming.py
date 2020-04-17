@@ -7,7 +7,7 @@ from argparse import Namespace
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
 from parse import parse_cfg
-from prints import errmsg, debugmsg
+from prints import errmsg, debugmsg, infomsg
 
 season_desc = "Staffel"
 
@@ -61,8 +61,7 @@ def analyze_series(series):
     ## Analyze resolution of the season
     series.resolution = get_resolution(series.file)
     if(series.resolution == -1):
-        errmsg("The resolution of the series episode was invalid", "Naming")
-        exit()
+        errmsg("The resolution of the series episode was invalid", "Naming"); exit()
 
     ## Analyze the current season number
     splitted = series.file_base.split(series.delim)
@@ -87,11 +86,9 @@ def analyze_series(series):
                 series.season = "{} {}".format(season_desc, series.season)
                 debugmsg("Alternative naming scheme found", "Naming")
             else:
-                errmsg("Undefined naming scheme for episode", "Naming", (series.file,))
-                exit()
+                errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
         else:
-            errmsg("Undefined naming scheme for episode", "Naming", (series.file,))
-            exit()
+            errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
 
     ## Get the series name of the file
     series.name_bk = series.original.replace(series.series_path, "").split(os.sep)[1]
@@ -114,7 +111,7 @@ def naming_episode(args):
     ## Move the file back to the original path
     file_name = "%s.%s.%s%s" % (series.name, series.episode, series.resolution, series.extension)
     file_dst = os.path.join(series.dst, file_name)
-    debugmsg("The new file path is", "Naming", (file_dst,))
+    infomsg("The new file path is", "Naming", (file_dst,))
     return file_dst
 
 ###############################################################################
@@ -129,8 +126,7 @@ def analyze_movie(movie):
     ## Analyze resolution of the season
     movie.resolution = get_resolution(movie.file)
     if(movie.resolution == -1):
-        errmsg("The resolution of the movie was invalid", "Naming")
-        exit()
+        errmsg("The resolution of the movie was invalid", "Naming"); exit()
 
     ## Get the real movie name of the file
     movie.name_bk = movie.original.replace(movie.movies_path, "").split(os.sep)[1]
@@ -162,7 +158,7 @@ def naming_movie(args):
     else:
         file_name = "%s%s" % (movie.name, movie.extension)
     file_dst = os.path.join(movie.dst, file_name)
-    debugmsg("The new file path is", "Naming", (file_dst,))
+    infomsg("The new file path is", "Naming", (file_dst,))
     return file_dst
 
 if __name__ == "__main__":

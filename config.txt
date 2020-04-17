@@ -16,3 +16,9 @@ handbrake_original = 3
 [SynoIndex]
 synoindex_port = 32699
 
+[Logging]
+## log_level:
+##  DEBUG   - Detailed information, typically of interest only when diagnosing problems.
+##  INFO    - Confirmation that things are working as expected.
+##  ERROR   - Due to a more serious problem, the software has not been able to perform some function.
+log_level = DEBUG
