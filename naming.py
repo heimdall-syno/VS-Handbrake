@@ -75,14 +75,25 @@ def analyze_series(series):
         debugmsg("Regular naming scheme not found, check for alternative naming scheme (101|1201)", "Naming")
         season_ep = splitted[-1]
         if (season_ep.isdigit()):
-            if (int(season_ep) > 100 and int(season_ep) < 1000):
-                series.season = "{:02d}".format(int(season_ep[0]))
-                series.episode = "S{}E{}".format(series.season, season_ep[1:])
-                series.season = "{} {}".format(season_desc, series.season)
-                debugmsg("Alternative naming scheme found", "Naming")
-            elif(int(season_ep) > 1000 and int(season_ep) < 2000):
-                series.season = "{:02d}".format(int(season_ep[:2]))
-                series.episode = "S{}E{}".format(series.season, season_ep[-2:])
+            if (int(season_ep) > 100 and int(season_ep) < 100000):
+                ## Single episode - 101, 923
+                if (int(season_ep) > 100 and int(season_ep) < 1000):
+                    series.season = "{:02d}".format(int(season_ep[0]))
+                    series.episode = "S{}E{}".format(series.season, season_ep[1:])
+                ## Single episode - 1001,9023
+                elif(int(season_ep) > 1000 and int(season_ep) < 4000):
+                    series.season = "{:02d}".format(int(season_ep[:2]))
+                    series.episode = "S{}E{}".format(series.season, season_ep[-2:])
+                ## Double episode - 100102, 12324, 92324
+                elif(int(season_ep) > 10000 and int(season_ep) < 40000):
+                    series.season = "{:02d}".format(int(season_ep[0]))
+                    series.episode = "S{}E{}".format(series.season, season_ep[1:3])
+                ## Double episode - 122324
+                elif(int(season_ep) > 100000 and int(season_ep) < 100000):
+                    series.season = "{:02d}".format(int(season_ep[:2]))
+                    series.episode = "S{}E{}".format(series.season, season_ep[2:4])
+                else:
+                    errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
                 series.season = "{} {}".format(season_desc, series.season)
                 debugmsg("Alternative naming scheme found", "Naming")
             else:
