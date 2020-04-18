@@ -72,10 +72,10 @@ def analyze_series(series):
         series.episode = "S%sE%s" % (series.season, re.split('s|e', season_ep.lower())[2])
         series.season = "%s %s" % (season_desc, series.season)
     except IndexError:
-        debugmsg("Regular naming scheme not found, check for alternative naming scheme (101|1201)", "Naming")
+        debugmsg("Regular naming scheme not found, check for alternative naming scheme (101|1201|122324)", "Naming")
         season_ep = splitted[-1]
         if (season_ep.isdigit()):
-            if (int(season_ep) > 100 and int(season_ep) < 100000):
+            if (int(season_ep) > 100 and int(season_ep) < 400000):
                 ## Single episode - 101, 923
                 if (int(season_ep) > 100 and int(season_ep) < 1000):
                     series.season = "{:02d}".format(int(season_ep[0]))
@@ -89,7 +89,7 @@ def analyze_series(series):
                     series.season = "{:02d}".format(int(season_ep[0]))
                     series.episode = "S{}E{}".format(series.season, season_ep[1:3])
                 ## Double episode - 122324
-                elif(int(season_ep) > 100000 and int(season_ep) < 100000):
+                elif(int(season_ep) > 100000 and int(season_ep) < 400000):
                     series.season = "{:02d}".format(int(season_ep[:2]))
                     series.episode = "S{}E{}".format(series.season, season_ep[2:4])
                 else:
