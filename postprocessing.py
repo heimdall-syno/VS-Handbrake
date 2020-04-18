@@ -79,7 +79,7 @@ def processing_file(cfg, args):
 
         msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
         infomsg(msg, "Postprocessing")
-        client(args.scope, cfg.port, file_dst, args.output_host, cfg.original)
+        client(args.scope, cfg.port, file_dst, args.output_host, args.source_host, cfg.original)
 
 def main():
     """ Name:    VS-Handbrake (Part of the VS-Package)
