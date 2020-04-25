@@ -21,7 +21,7 @@ def scope_get():
 
     cgroup_path = os.path.join(os.sep, "proc", "1" , "cgroup")
     with open(cgroup_path, 'r') as f: groups = f.readlines()
-    groups = list(set([g.split(":")[-1] for g in groups]))
+    groups = list(set([g.replace("\n","").split(":")[-1] for g in groups]))
     if (len(groups) == 1 and groups[0] == os.sep):
         return "host"
     return "docker"
