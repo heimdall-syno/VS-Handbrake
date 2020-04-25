@@ -1,24 +1,48 @@
-##############################################################
-##          Config file for the VS-Handbrake                ##
-##############################################################
+###############################################################################
+##                     Config file for the VS-Handbrake                      ##
+###############################################################################
 
+###############################################################################
 [Handbrake]
+###############################################################################
+## All configuration related with handbrake.
+
+## Movie-based directories:
+##  If a video file was converted with handbrake, it will renamed and relocated
+##  by VS-Handbrake. In order to do so the scripts needs the different direct-
+##  ories and their video-file type. The script checks whether any string of the
+##  string list is part of the video file path.
+##  E.g. /volume1/Filme -> movie-based file.
 handbrake_movies = Filme, video
+
+## series-based directories (analogous to movie-based directories)
 handbrake_series = Serien, Dokus, Anime
 
-## handbrake_original:
-##  0 - (Leave) The source file remains unchanged.
-##  1 - (Ignore) The source file remains unchanged but not synoindexed.
-##  2 - (Delete) If extracted from RAR archive delete the source file.
-##  3 - (Ignore|Delete): If extracted delete it otherwise ignore it.
+## Specify the handling with the original video file.
+##   0 - (Leave) The source file remains unchanged.
+##   1 - (Ignore) The source file remains unchanged but not synoindexed.
+##   2 - (Delete) If extracted from RAR archive delete the source file.
+##   3 - (Ignore|Delete): If extracted delete it otherwise ignore it.
 handbrake_original = 3
 
+###############################################################################
 [SynoIndex]
+###############################################################################
+## Settings defining the communication with the SynoIndex server.
+
+## Port of the Syno Index server running as DSM Task.
 synoindex_port = 32699
 
+###############################################################################
 [Logging]
-## log_level:
-##  10 - (DEBUG) Detailed information, typically of interest only when diagnosing problems.
-##  20 - (INFO)  Confirmation that things are working as expected.
-##  40 - (ERROR) Due to a more serious problem, the software has not been able to perform some function.
+###############################################################################
+## Settings for the logging.
+
+## Log level used in the stdout and log file:
+##   10 - (DEBUG) Detailed information, only when diagnosing problems.
+##   20 - (INFO)  Confirmation that things are working as expected.
+##   40 - (ERROR) The software has not been able to perform some function.
 log_level = 10
+
+## Path to the log directory.
+log_dir = /volume1/docker/logs
