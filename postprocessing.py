@@ -1,30 +1,18 @@
-#################################################
-##           Scope: Docker-Container           ##
-#################################################
 import os, sys, time, argparse, subprocess
 from datetime import datetime
 
-## Add modules from the submodule (vs-utils)
+## Add modules from the submodule (VS-Utils)
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(cur_dir, "VS-Utils"))
 from prints import errmsg, debugmsg, infomsg, init_logging
 from naming import naming_episode, naming_movie
 from parse import parse_cfg
+from scope import scope_get
 from client import client
 
 def switch_original(original):
     switcher = { 0: "leave", 1: "ignore", 2: "delete", 3: "delete|ignore"}
     return switcher.get(original, "Invalid original mode")
-
-def scope_get():
-    ''' Get the scope of the script (within docker container or host system) '''
-
-    cgroup_path = os.path.join(os.sep, "proc", "1" , "cgroup")
-    with open(cgroup_path, 'r') as f: groups = f.readlines()
-    groups = list(set([g.replace("\n","").split(":")[-1] for g in groups]))
-    if (len(groups) == 1 and groups[0] == os.sep):
-        return "host"
-    return "docker"
 
 def get_convert_source_path(args):
     """ Get the convert file path and the source path inside it.
@@ -60,7 +48,7 @@ def processing_file(cfg, args):
     file_dst = None
     if any(file_type in args.root_host.split(os.sep) for file_type in cfg.series):
         infomsg("Type: Episode", "Postprocessing")
-        file_dst = naming_episode(args)
+        file_dst = naming_episode(args, cfg)
 
     elif any(file_type in args.root_host.split(os.sep) for file_type in cfg.movies):
         infomsg("Type: Movie", "Postprocessing")

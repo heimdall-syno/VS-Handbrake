@@ -25,6 +25,10 @@ handbrake_series = Serien, Dokus, Anime
 ##   3 - (Ignore|Delete): If extracted delete it otherwise ignore it.
 handbrake_original = 3
 
+## Specify the language for the file system structure:
+##   DE, EN
+handbrake_language = DE
+
 ###############################################################################
 [SynoIndex]
 ###############################################################################

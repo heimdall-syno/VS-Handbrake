@@ -1,4 +1,4 @@
-import sys, os, re, argparse, subprocess
+import sys, os, re, argparse, subprocess, locale
 from shutil import move
 from collections import Counter
 from argparse import Namespace
@@ -9,10 +9,16 @@ sys.path.append(os.path.join(cur_dir, "VS-Utils"))
 from parse import parse_cfg
 from prints import errmsg, debugmsg, infomsg
 
-season_desc = "Staffel"
-
 config_file = os.path.dirname(os.path.abspath(__file__)) + '/config.txt'
 cfg = parse_cfg(config_file, "vs-handbrake", "host")
+
+def get_season_desc(cfg):
+    if (cfg.language == "DE"):
+        return "Staffel"
+    elif(cfg.language == "EN"):
+        return "Season"
+    else:
+        errmsg("Invalid language in configuration", "Naming"); exit()
 
 def get_resolution(file_name):
 
@@ -53,7 +59,7 @@ def delimiter_get(filename):
 ###                               Series                                    ###
 ###############################################################################
 
-def analyze_series(series):
+def analyze_series(cfg, series):
 
     ## Get the extensions of the season
     series.file_base, series.extension = os.path.splitext(series.file)
@@ -70,7 +76,7 @@ def analyze_series(series):
         season_ep = [f for f in splitted if "s0" in f.lower() or "s1" in f.lower()][0]
         series.season = "{}".format(re.split('s|e', season_ep.lower())[1])
         series.episode = "S%sE%s" % (series.season, re.split('s|e', season_ep.lower())[2])
-        series.season = "%s %s" % (season_desc, series.season)
+        series.season = "%s %s" % (get_season_desc(cfg), series.season)
     except IndexError:
         debugmsg("Regular naming scheme not found, check for alternative naming scheme (101|1201|122324)", "Naming")
         season_ep = splitted[-1]
@@ -94,7 +100,7 @@ def analyze_series(series):
                     series.episode = "S{}E{}".format(series.season, season_ep[2:4])
                 else:
                     errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
-                series.season = "{} {}".format(season_desc, series.season)
+                series.season = "{} {}".format(get_season_desc(cfg), series.season)
                 debugmsg("Alternative naming scheme found", "Naming")
             else:
                 errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
@@ -109,7 +115,7 @@ def analyze_series(series):
     series.dst = os.path.join(series.series_path, series.name_bk, series.season)
     return series
 
-def naming_episode(args):
+def naming_episode(args, cfg):
 
     ## Get the delimiter of the video filename
     delimiter = delimiter_get(args.file)
@@ -117,7 +123,7 @@ def naming_episode(args):
     ## Get all information about the episode and season
     path = os.path.abspath(os.path.join(args.file, os.pardir))
     series = Namespace(file=args.file, path=path, delim=delimiter, original=args.source_host, series_path=args.root_host)
-    series = analyze_series(series)
+    series = analyze_series(cfg, series)
 
     ## Move the file back to the original path
     file_name = "%s.%s.%s%s" % (series.name, series.episode, series.resolution, series.extension)
@@ -171,13 +177,3 @@ def naming_movie(args):
     file_dst = os.path.join(movie.dst, file_name)
     infomsg("The new file path is", "Naming", (file_dst,))
     return file_dst
-
-if __name__ == "__main__":
-
-    args = argparse.Namespace()
-    parser = argparse.ArgumentParser(description='Series naming script')
-    parser.add_argument('-f','--file', help='Path to the converted coutput video file', required=True)
-    parser.add_argument('-o','--original', help='Path to the original file', required=True)
-    args = parser.parse_args()
-    args.source_host = args.original
-    naming_episode(args)
