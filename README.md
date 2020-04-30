@@ -54,6 +54,7 @@ $ sudo docker run -d \
     -v /volume1/docker/handbrake/output:/output:rw \
     -v /volume1/docker/handbrake/convert:/convert:rw \
     -v /volume1/docker/handbrake:/data:rw \
+    -v /volume1/docker/logs:/logs:rw \
     jlesage/handbrake
 ```
 
