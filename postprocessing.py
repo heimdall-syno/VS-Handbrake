@@ -92,6 +92,7 @@ def main():
     init_logging(args, cfg)
 
     ## Print the date and the file
+    infomsg("-" * 35, "Postprocessing")
     infomsg("Handbrake finished converting file", "Postprocessing", (args.file,))
 
     ## Check for the source file, continue if convert file doesnt exist
