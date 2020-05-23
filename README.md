@@ -7,23 +7,34 @@ It is the second part of the VS-Toolchain to download, convert, rename and reloc
 
 Checkout the first part of the toolchain - called VS-Transmission (https://github.com/salsh/vs-handbrake) - which performs the downloading part.
 
-## Overview of the VS-Components
+## Overview of the VS-Toolchain
 ```
-             +---------------------------------------------------------------------------------+
-             |                                  Synology DSM                                   |
-             +---------------------------------------------------------------------------------+
-             |                  +--------------------+  +-----------------+                    |
-             |                  |       Docker       |  |      Docker     |                    |
-             |                  |transmission.openVpn|  |     Handbrake   |                    |
-             |                  +--------------------+  +-----------------+                    |
-             | +------------+   | +---------------+  |  | +-------------+ |  +---------------+ |
-             | |VS-SynoIndex|   | |VS-Transmission|  |  | | VS-Handbrake| |  |VS-Notification| |
-             | |   (Task)   +---->+   (Script)    +------>+   (Script)  +--->+    (Task)     | |
-             | +------------+   | +---------------+  |  | +-------------+ |  +---------------+ |
-             |                  +--------------------+  +-----------------+                    |
-             |                                                                                 |
-             +---------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------+
+|                                             Synology DSM                                                |
++---------------------------------------------------------------------------------------------------------+
+|                                                                                    +-----------------+  |
+|                                                                                    |      DSM        |  |
+|  +--------------------+                                                            |VS-Playlist-Share|  |
+|  |       Docker       +-------+                                                    |   (Optional)    |  |
+|  |transmission openVpn|       |                                                    +-----------------+  |
+|  +--------------------+       v                                                                         |
+|            or            +----+------------+   +------------+   +--------------+    +---------------+   |
+|  +--------------------+  |    DSM/Docker   +-->+   Docker   +-->+    Docker    +--->+     DSM       |   |
+|  |        DSM         +--+ VS-Transmission |   |  Handbrake |   | VS-Handbrake |    |VS-Notification|   |
+|  |    Transmission    |  |    (Required)   +-+ | (Optional) |   |  (Optional)  +--+ |  (Optional)   |   |
+|  +--------------------+  +----+------------+ | +------------+   +--------------+  | +---------------+   |
+|            or                 |              |                                    |                     |
+|  +--------------------+       |              |                                    |                     |
+|  |        DSM         +-------+              |                                    |                     |
+|  |  Download-Station  |                      v                                    v                     |
+|  +--------------------+    +-----------------+------------------------------------+------------------+  |
+|                            |                                DSM Task                                 |  |
+|                            |                              VS-SynoIndex                               |  |
+|                            |                               (Required)                                |  |
+|                            +-------------------------------------------------------------------------+  |
++---------------------------------------------------------------------------------------------------------+
 ```
+
 
 Check out the other components:
 
@@ -35,6 +46,48 @@ VS-Transmission:   https://github.com/heimdall-syno/VS-Transmission
 VS-Notification:   https://github.com/heimdall-syno/VS-Notification
 
 VS-Playlist-Share: https://github.com/heimdall-syno/VS-Playlist-Share
+
+## Result
+
+**Movie-based formats**
+- Index original until converted file exists then keep the original,
+- Extract archive, index files until converted ones exist then delete them
+
+```
+/volume1/Movies/
+  Joker.2019.AC3.1080p.BluRay.h264-xX/
+    Joker.AC3.1080p.BluRay.x264-xX.mkv       (Original, Indexed until converted version exists -> ignored)
+    Joker.mkv                                (Result, Renamed/Indexed by VS-Handbrake - e.g. x265)
+
+  Bloodshot.2020.DL.1080p.BluRay.x264-xX/
+    xx-hd-bloodshot-1080p.rar                (Original, Extracted)
+    xx-hd-bloodshot-1080p.r00                (Original, Extracted)
+    Bloodshot.2020.AC3.1080p.x264-xX.mkv     (Temporary, Indexed until converted file exists -> deleted)
+    Bloodshot.mkv                            (Result, Renamed/Indexed by VS-Handbrake - e.g. x265)
+```
+
+**Season-based formats (TV shows, documentation etc.)**
+- Index original episodes until converted file exists then keep the original,
+- Extract whole season archives, index files until converted ones exist then delete extracted files
+
+```
+/volume1/Series/
+  Game of Thrones/
+    Season 01/
+      Game of Thrones.S01.1080p.x264-xX/
+          got-s01e01.1080.mkv              (Original, Indexed until converted file exists -> ignored)
+          got-s01e02.1080.mkv              (Original, Indexed until converted file exists -> ignored)
+      Game-of-Thrones.S01E01.1080p.mkv     (Result, Renamed/Indexed by VS-Handbrake - e.g. x265)
+      Game-of-Thrones.S01E02.1080p.mkv     (Result, Renamed/Indexed by VS-Handbrake - e.g. x265)
+
+  Carnival Row/
+    Season 01/
+      Carnival.Row.S01.DL.1080p.x264-xX/
+          carival-row-hd-1080p.rar         (Original, Extracted)
+          carnival-row.s01e01.mkv          (Temporary, Indexed until converted file exists -> ignored/deleted)
+      Carnival-Row.S01E01.1080p.mkv        (Result, Renamed/Indexed by VS-Handbrake)
+      Carnival-Row.S01E02.1080p.mkv        (Result, Renamed/Indexed by VS-Handbrake)
+```
 
 ## Quick Start
 

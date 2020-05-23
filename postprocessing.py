@@ -84,6 +84,10 @@ def main():
     args.script_dir = cur_dir
     args.scope = scope_get()
 
+    ## Check whether the file exists
+    if not os.path.isfile(args.file):
+        errmsg("File does not exist, check the path", "Postprocessing")
+
     ## Parse the config
     config_file = os.path.join(cur_dir, "config.txt")
     cfg = parse_cfg(config_file, "vs-handbrake", "docker")
