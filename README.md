@@ -126,3 +126,16 @@ $ sudo docker run -d \
 5. Edit the port number according to your VS-SynoIndex configuration in `post_conversion.sh`
 
 6. Edit the config file to define which mounts belongs to which video file category (movies or series)
+
+7. In order to support different conversions for 1080p and 4K video files, it is currently necessary to
+   patch the automatedvideoconverter service of the handbrake container. To do so, add the lines below
+   to /etc/services.d/autovideoconverter/run (e.g. Synology/4K-x265):
+```
+  ...
+  if [ "$DIR" == "/watch2" ]; then
+      AC_PRESET="<4K-Preset-Group/4K-Preset>"
+  fi
+
+  # Process watch folder.
+  process_watch_folder "$DIR"
+```
