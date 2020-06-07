@@ -105,7 +105,18 @@ def analyze_series(cfg, series):
             else:
                 errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
         else:
-            errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
+            debugmsg("Alternative naming scheme not found, check for unusual naming scheme (Ep 01)", "Naming")
+            season = None
+            for part in splitted:
+                if (part.isdigit()):
+                    season = series.original.replace(series.series_path, "").split(os.sep)[2].split()[1]
+                    series.season = "{:02d}".format(int(season))
+                    series.episode = "S{}E{}".format(series.season, part)
+                    series.season = "{} {}".format(get_season_desc(cfg), series.season)
+                    debugmsg("Unusual naming scheme found", "Naming")
+                    break
+            if not season:
+                errmsg("Undefined naming scheme for episode", "Naming", (series.file,)); exit()
 
     ## Get the series name of the file
     series.name_bk = series.original.replace(series.series_path, "").split(os.sep)[1]
