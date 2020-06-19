@@ -7,7 +7,7 @@ sys.path.append(os.path.join(cur_dir, "VS-Utils"))
 from prints import errmsg, debugmsg, infomsg, init_logging
 from naming import naming_episode, naming_movie
 from parse import parse_cfg
-from scope import scope_get
+from scope import scope_get, scope_reverse_map_path
 from client import client
 
 def switch_original(original):
@@ -39,7 +39,7 @@ def get_convert_source_path(args):
     ## Get the source path
     with open(args.convert_path, "r") as f: lines = f.readlines()
     convert_args = [l.replace("\n", "").split(":")[1] for l in lines]
-    args.root_host, args.source_host, args.output_host = convert_args
+    args.root_host, args.source_host, args.output_host, args.watch_host = convert_args
     return args
 
 def processing_file(cfg, args):
@@ -58,12 +58,15 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert and watch file and add to synoindex
     if file_dst:
+        watch_file = scope_reverse_map_path(cfg, args, args.watch_host)
+        debugmsg("Delete watch file", "Postprocessing", (watch_file,))
+        try:
+            os.remove(watch_file)
+        except FileNotFoundError:
+            errmsg("Could not find watch file at", "Postprocessing", (watch_file,)); exit()
+
         debugmsg("Delete convert file", "Postprocessing", (args.convert_path,))
         os.remove(args.convert_path)
-
-        watch_path = os.path.join(os.sep, "watch", os.path.basename(args.output_host))
-        debugmsg("Delete watch file", "Postprocessing", (watch_path,))
-        os.remove(watch_path)
 
         msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
         infomsg(msg, "Postprocessing")
