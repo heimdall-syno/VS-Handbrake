@@ -58,6 +58,10 @@ def processing_file(cfg, args):
 
     ## Delete the corresponding convert and watch file and add to synoindex
     if file_dst:
+        msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
+        infomsg(msg, "Postprocessing")
+        client(args.scope, cfg.port, file_dst, args.output_host, args.source_host, cfg.original)
+
         watch_file = scope_reverse_map_path(cfg, args, args.watch_host)
         debugmsg("Delete watch file", "Postprocessing", (watch_file,))
         try:
@@ -67,10 +71,6 @@ def processing_file(cfg, args):
 
         debugmsg("Delete convert file", "Postprocessing", (args.convert_path,))
         os.remove(args.convert_path)
-
-        msg = "Add converted file to synoindex and {} original file".format(switch_original(cfg.original))
-        infomsg(msg, "Postprocessing")
-        client(args.scope, cfg.port, file_dst, args.output_host, args.source_host, cfg.original)
 
 def main():
     """ Name:    VS-Handbrake (Part of the VS-Package)
